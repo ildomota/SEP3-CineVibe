@@ -1,0 +1,83 @@
+﻿@page "/register-admin"
+@using System.Net.Http.Headers
+@using System.Text
+@using CineVibeClient.Models
+@inject IHttpClientFactory ClientFactory
+
+<h3>Admin Registration</h3>
+
+@if (registerMessage != null)
+{
+    <div class="alert alert-info">@registerMessage</div>
+}
+
+<EditForm Model="registerAdminModel" OnValidSubmit="HandleRegisterAdmin">
+    <div class="mb-3">
+        <label for="adminCode" class="form-label">Admin Code</label>
+        <InputText id="adminCode" class="form-control" @bind-Value="registerAdminModel.AdminCode" />
+    </div>
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <InputText id="username" class="form-control" @bind-Value="registerAdminModel.Username" />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <InputText id="password" class="form-control" type="password" @bind-Value="registerAdminModel.Password" />
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <InputText id="email" class="form-control" @bind-Value="registerAdminModel.Email" />
+    </div>
+    <button type="submit" class="btn btn-success">Register Admin</button>
+</EditForm>
+
+@code {
+    private RegisterAdminModel registerAdminModel = new();
+    private string? registerMessage;
+
+    private async Task HandleRegisterAdmin()
+    {
+        if (registerAdminModel.AdminCode != "010108")
+        {
+            registerMessage = "Invalid admin code.";
+            return;
+        }
+
+        var apiClient = ClientFactory.CreateClient("JavaAPI");
+
+        var registerData = new
+        {
+            Username = registerAdminModel.Username,
+            PasswordHash = registerAdminModel.Password,
+            Email = registerAdminModel.Email,
+            SecretCode = registerAdminModel.AdminCode
+        };
+
+        try
+        {
+            var response = await apiClient.PostAsJsonAsync("api/admins/register", registerData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                registerMessage = "Admin registration successful!";
+                registerAdminModel = new(); // Reset form
+            }
+            else
+            {
+                registerMessage = "Registration failed. Try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            registerMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private class RegisterAdminModel
+    {
+        public string AdminCode { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+    }
+}

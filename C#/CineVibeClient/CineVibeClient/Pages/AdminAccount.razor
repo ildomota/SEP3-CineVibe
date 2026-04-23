@@ -1,0 +1,42 @@
+﻿@page "/admin-account"
+@using Blazored.LocalStorage
+@using CineVibeClient.Models
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+
+<h3>Admin Account</h3>
+
+@if (admin == null)
+{
+    <div class="alert alert-danger">
+        You are not logged in. Please <a href="/admin-login">log in</a> to access your account.
+    </div>
+}
+else
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@admin.Username's Account</h5>
+            <p class="card-text"><strong>Email:</strong> @admin.Email</p>
+            <p class="card-text"><strong>Status:</strong> @admin.Status</p>
+        </div>
+    </div>
+}
+
+@code {
+    private Admin? admin;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAdminData();
+    }
+
+    private async Task LoadAdminData()
+    {
+        admin = await LocalStorage.GetItemAsync<Admin>("user");
+        if (admin == null)
+        {
+            NavigationManager.NavigateTo("/admin-login");
+        }
+    }
+}

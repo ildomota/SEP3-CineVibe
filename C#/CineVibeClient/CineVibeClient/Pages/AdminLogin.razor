@@ -1,0 +1,75 @@
+﻿@page "/admin-login"
+@using CineVibeClient.Models
+@inject IHttpClientFactory ClientFactory
+@inject NavigationManager NavigationManager
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h3>Admin Login</h3>
+
+@if (adminLoginError != null)
+{
+    <div class="alert alert-danger">@adminLoginError</div>
+}
+
+<EditForm Model="adminLoginModel" OnValidSubmit="HandleAdminLogin">
+    <div class="mb-3">
+        <label for="username" class="form-label">Username</label>
+        <InputText id="username" class="form-control" @bind-Value="adminLoginModel.Username" />
+    </div>
+    <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <InputText id="password" class="form-control" type="password" @bind-Value="adminLoginModel.Password" />
+    </div>
+    <div class="mb-3">
+        <label for="adminCode" class="form-label">Admin Code</label>
+        <InputText id="adminCode" class="form-control" @bind-Value="adminLoginModel.AdminCode" maxlength="6" />
+    </div>
+    <button type="submit" class="btn btn-success">Login as Admin</button>
+</EditForm>
+
+@code {
+    private AdminLoginModel adminLoginModel = new();
+    private string? adminLoginError;
+
+    private async Task HandleAdminLogin()
+    {
+        var apiClient = ClientFactory.CreateClient("JavaAPI");
+        var loginData = new
+        {
+            SecretCode = adminLoginModel.AdminCode,
+            Username = adminLoginModel.Username,
+            Password = adminLoginModel.Password
+        };
+
+        try
+        {
+            var response = await apiClient.PostAsJsonAsync("api/admins/login", loginData);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var admin = await response.Content.ReadFromJsonAsync<Admin>();
+                if (admin != null)
+                {
+                    await LocalStorage.SetItemAsync("user", admin);
+                    await LocalStorage.SetItemAsync("userType", "Admin");
+                    NavigationManager.NavigateTo("/admin-account", forceLoad: true);
+                }
+            }
+            else
+            {
+                adminLoginError = "Invalid admin credentials.";
+            }
+        }
+        catch (Exception ex)
+        {
+            adminLoginError = $"An error occurred: {ex.Message}";
+        }
+    }
+
+    private class AdminLoginModel
+    {
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public string AdminCode { get; set; } = string.Empty;
+    }
+}

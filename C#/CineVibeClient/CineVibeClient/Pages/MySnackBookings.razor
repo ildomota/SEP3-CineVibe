@@ -1,0 +1,112 @@
+﻿@page "/mysnackorders"
+@using CineVibeClient.Models
+@inject HttpClient Http
+@inject NavigationManager _nav
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h1 class="centered-title">My Snack Orders</h1>
+
+@if (customerSnackOrders == null)
+{
+    <p class="text-center">Loading...</p>
+}
+else if (!customerSnackOrders.Any())
+{
+    <p class="text-center text-muted">No snack orders found.</p>
+}
+else
+{
+    <!-- Display Grouped Snack Orders by Booking ID -->
+    <div class="container mt-4">
+        @foreach (var group in customerSnackOrders.GroupBy(o => o.BookingId))
+        {
+            <div class="snack-order-group border rounded shadow-sm p-4 mb-4" style="background-color: #f8f9fa;">
+                <!-- Header for Booking ID -->
+                <h4 class="fw-bold mb-3">Booking ID: @group.Key</h4>
+
+                <!-- List of Snacks -->
+                @foreach (var snack in group)
+                {
+                    <div class="d-flex align-items-center mb-3" style="border: 1px solid #dee2e6; border-radius: 8px; background-color: #ffffff; padding: 10px;">
+                        <!-- Snack Image -->
+                        <div class="poster-container me-3 d-flex justify-content-center align-items-center" style="width: 100px; height: 100px;">
+                            <img src="@snack.ImagePath" alt="@snack.SnackName Image" class="rounded snack-image" style="max-width: 100%; max-height: 100%; object-fit: contain;" />
+                        </div>
+
+                        <!-- Snack Details -->
+                        <div>
+                            <h5 class="fw-bold mb-1">@snack.SnackName</h5>
+                            <p class="mb-1"><strong>Quantity:</strong> @snack.Quantity</p>
+                            <p class="mb-1"><strong>Total Price:</strong> €@snack.TotalPrice</p>
+                            <p class="mb-1"><strong>Discounted Price:</strong> €@snack.DiscountedPrice</p>
+                        </div>
+                    </div>
+                }
+
+                <!-- Total Discounted Price for the Booking -->
+                <p class="fw-bold mt-3">Total for this Booking: €@group.Sum(s => s.DiscountedPrice)</p>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<SnackOrderWithDetails> customerSnackOrders = new();
+    private string? snackOrderMessage;
+    private int loggedInCustomerId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await LocalStorage.GetItemAsync<Customer>("user");
+        if (user != null)
+        {
+            loggedInCustomerId = user.CustomerId;
+
+            try
+            {
+                // Fetch snack orders for the logged-in customer
+                var orders = await Http.GetFromJsonAsync<List<SnackOrder>>($"api/snackorder/customer/{loggedInCustomerId}");
+                if (orders != null)
+                {
+                    customerSnackOrders = new List<SnackOrderWithDetails>();
+
+                    foreach (var order in orders)
+                    {
+                        // Fetch snack details based on SnackId
+                        var snack = await Http.GetFromJsonAsync<Snacks>($"api/snacks/{order.SnackId}");
+
+                        customerSnackOrders.Add(new SnackOrderWithDetails
+                        {
+                            BookingId = order.BookingId,
+                            SnackName = snack?.Name ?? "Unknown Snack",
+                            ImagePath = snack?.ImagePath ?? "images/default-snack.jpg",
+                            Quantity = order.Quantity,
+                            TotalPrice = order.TotalPrice,
+                            DiscountedPrice = order.DiscountedPrice,
+                            OrderDate = order.OrderDate
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                snackOrderMessage = $"Error loading snack orders: {ex.Message}";
+            }
+        }
+        else
+        {
+            _nav.NavigateTo("/login");
+        }
+    }
+
+    private class SnackOrderWithDetails
+    {
+        public int BookingId { get; set; }
+        public string SnackName { get; set; } = string.Empty;
+        public string ImagePath { get; set; } = "images/default-snack.jpg";
+        public int Quantity { get; set; }
+        public decimal TotalPrice { get; set; }
+        public decimal DiscountedPrice { get; set; }
+        public DateTime OrderDate { get; set; }
+    }
+}

@@ -1,0 +1,112 @@
+﻿@page "/mysnacks"
+@using CineVibeClient.Models
+@inject HttpClient Http
+@inject NavigationManager _nav
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h1 class="centered-title">My Snacks</h1>
+
+@if (customerBookings == null)
+{
+    <p class="text-center">Loading...</p>
+}
+else if (!customerBookings.Any())
+{
+    <p class="text-center text-muted">No active bookings found.</p>
+}
+else
+{
+    <div class="container mt-4">
+        @foreach (var booking in customerBookings)
+        {
+            <div class="booking-card border rounded shadow-sm p-3 mb-3 d-flex align-items-center">
+                <!-- Poster Image -->
+                <div class="poster-container me-3">
+                    <img src="@booking.PosterUrl" alt="@booking.MovieTitle Poster" class="rounded poster-image" />
+                </div>
+
+                <!-- Booking Information -->
+                <div class="flex-grow-1">
+                    <h5 class="fw-bold mb-3">@booking.MovieTitle</h5>
+                    <p class="mb-1"><strong>Booking ID:</strong> @booking.BookingId</p>
+                    <p class="mb-1"><strong>Date:</strong> @booking.BookingDate.ToString("dd/MM/yyyy")</p>
+                    <p class="mb-1"><strong>Time:</strong> @booking.BookingTime</p>
+                    <p class="mb-1"><strong>Seat:</strong> @booking.SeatNumber</p>
+                </div>
+
+                <!-- Book Snacks Button -->
+                <div>
+                    <button class="btn btn-primary" @onclick="() => GoToBookSnacks(booking.BookingId)">
+                        Book Your Snacks
+                    </button>
+
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<BookingWithMovieTitle> customerBookings = new();
+    private string? errorMessage;
+    private int loggedInCustomerId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await LocalStorage.GetItemAsync<Customer>("user");
+        if (user != null)
+        {
+            loggedInCustomerId = user.CustomerId;
+
+            try
+            {
+                // Recupera le prenotazioni attive
+                var bookings = await Http.GetFromJsonAsync<List<Booking>>($"api/booking/customer/{loggedInCustomerId}");
+                customerBookings = new List<BookingWithMovieTitle>();
+
+                if (bookings != null)
+                {
+                    foreach (var booking in bookings.Where(b => b.Status == "Confirmed"))
+                    {
+                        // Carica i dettagli del film associato alla prenotazione
+                        var movie = await Http.GetFromJsonAsync<Movie>($"api/movie/{booking.MovieId}");
+                        customerBookings.Add(new BookingWithMovieTitle
+                        {
+                            BookingId = booking.BookingId,
+                            BookingDate = booking.BookingDate,
+                            BookingTime = booking.BookingTime,
+                            SeatNumber = booking.SeatNumber,
+                            MovieTitle = movie?.Title ?? "Unknown Movie",
+                            PosterUrl = movie?.PosterURL ?? "default-poster.jpg"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                errorMessage = $"Error loading bookings: {ex.Message}";
+            }
+        }
+        else
+        {
+            _nav.NavigateTo("/login");
+        }
+    }
+
+    private void GoToBookSnacks(int bookingId)
+    {
+        _nav.NavigateTo($"/booksnacks/{bookingId}");
+    }
+
+
+    // Custom class to hold booking details with movie title and poster
+    private class BookingWithMovieTitle
+    {
+        public int BookingId { get; set; }
+        public DateTime BookingDate { get; set; }
+        public string BookingTime { get; set; } = string.Empty;
+        public string SeatNumber { get; set; } = string.Empty;
+        public string MovieTitle { get; set; } = string.Empty;
+        public string PosterUrl { get; set; } = string.Empty;
+    }
+}

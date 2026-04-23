@@ -1,0 +1,151 @@
+﻿@page "/mybookings"
+@using CineVibeClient.Models
+@inject HttpClient Http
+@inject NavigationManager _nav
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h1 class="centered-title">My Bookings</h1>
+
+@if (customerBookings == null)
+{
+    <p class="text-center">Loading...</p>
+}
+else if (!customerBookings.Any())
+{
+    <p class="text-center text-muted">No bookings found.</p>
+}
+else
+{
+    <!-- Confirmed Bookings -->
+    <div class="container mt-4">
+        <h3>Active Bookings</h3>
+        @foreach (var booking in customerBookings.Where(b => b.Status == "Confirmed"))
+        {
+            <div class="booking-card border rounded shadow-sm p-3 mb-3 d-flex align-items-center">
+                <!-- Poster Image -->
+                <div class="poster-container me-3">
+                    <img src="@booking.PosterUrl" alt="@booking.MovieTitle Poster" class="rounded poster-image" />
+                </div>
+
+                <!-- Booking Information -->
+                <div>
+                    <h5 class="fw-bold mb-3">@booking.MovieTitle</h5>
+                    <p class="mb-1"><strong>Booking ID:</strong> @booking.BookingId</p>
+                    <p class="mb-1"><strong>Date:</strong> @booking.BookingDate.ToString("dd/MM/yyyy")</p>
+                    <p class="mb-1"><strong>Time:</strong> @booking.BookingTime</p>
+                    <p class="mb-1"><strong>Seat:</strong> @booking.SeatNumber</p>
+                    <p class="mb-3"><strong>Status:</strong> @booking.Status</p>
+
+                    <!-- Delete Button -->
+                    <button class="btn btn-danger delete-button" @onclick="() => DeleteBooking(booking.BookingId)">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        }
+
+        <!-- Expired Bookings -->
+        <h3 class="mt-5">Expired Bookings</h3>
+        @foreach (var booking in customerBookings.Where(b => b.Status == "Expired"))
+        {
+            <div class="booking-card expired border rounded p-3 mb-3 d-flex align-items-center">
+                <!-- Poster Image -->
+                <div class="poster-container me-3">
+                    <img src="@booking.PosterUrl" alt="@booking.MovieTitle Poster" class="rounded poster-image" />
+                </div>
+
+                <!-- Booking Information -->
+                <div>
+                    <h5 class="fw-bold mb-3">@booking.MovieTitle</h5>
+                    <p class="mb-1"><strong>Booking ID:</strong> @booking.BookingId</p>
+                    <p class="mb-1"><strong>Date:</strong> @booking.BookingDate.ToString("dd/MM/yyyy")</p>
+                    <p class="mb-1"><strong>Time:</strong> @booking.BookingTime</p>
+                    <p class="mb-1"><strong>Seat:</strong> @booking.SeatNumber</p>
+                    <span class="badge bg-secondary">Expired</span>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private List<BookingWithMovieTitle> customerBookings = new();
+    private string? bookingMessage;
+    private int loggedInCustomerId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await LocalStorage.GetItemAsync<Customer>("user");
+        if (user != null)
+        {
+            loggedInCustomerId = user.CustomerId;
+
+            try
+            {
+                // Aggiorna i biglietti scaduti
+                await Http.PostAsync("api/booking/updateExpiredBookings", null);
+
+                // Fetch bookings for the customer
+                var bookings = await Http.GetFromJsonAsync<List<Booking>>($"api/booking/customer/{loggedInCustomerId}");
+                if (bookings != null)
+                {
+                    customerBookings = new List<BookingWithMovieTitle>();
+                    foreach (var booking in bookings)
+                    {
+                        var movie = await Http.GetFromJsonAsync<Movie>($"api/movie/{booking.MovieId}");
+                        customerBookings.Add(new BookingWithMovieTitle
+                        {
+                            BookingId = booking.BookingId,
+                            BookingDate = booking.BookingDate,
+                            BookingTime = booking.BookingTime,
+                            SeatNumber = booking.SeatNumber,
+                            Status = booking.Status,
+                            MovieTitle = movie?.Title ?? "Unknown Movie",
+                            PosterUrl = movie?.PosterURL ?? "default-poster.jpg"
+                        });
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                bookingMessage = $"Error loading bookings: {ex.Message}";
+            }
+        }
+        else
+        {
+            _nav.NavigateTo("/login");
+        }
+    }
+
+    private async Task DeleteBooking(int bookingId)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/booking/{bookingId}");
+            if (response.IsSuccessStatusCode)
+            {
+                customerBookings = customerBookings.Where(b => b.BookingId != bookingId).ToList();
+            }
+            else
+            {
+                bookingMessage = "Failed to delete the booking.";
+            }
+        }
+        catch (Exception ex)
+        {
+            bookingMessage = $"Error deleting booking: {ex.Message}";
+        }
+    }
+
+    // Custom class to hold booking details with movie title and poster
+    private class BookingWithMovieTitle
+    {
+        public int BookingId { get; set; }
+        public DateTime BookingDate { get; set; } = DateTime.MinValue;
+        public string BookingTime { get; set; } = string.Empty;
+        public string SeatNumber { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public string MovieTitle { get; set; } = string.Empty;
+        public string PosterUrl { get; set; } = string.Empty;
+    }
+}

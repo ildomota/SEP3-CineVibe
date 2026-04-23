@@ -1,0 +1,140 @@
+﻿@page "/myaccount"
+@using Blazored.LocalStorage
+@using CineVibeClient.Models
+
+<h3>My Account</h3>
+
+@if (user == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">@user.Username's Account</h5>
+            <p class="card-text"><strong>Email:</strong> @user.Email</p>
+            <p class="card-text"><strong>Status:</strong> @user.Status</p>
+            <p class="card-text"><strong>Loyalty Points:</strong> @user.LoyaltyPoints</p>
+        </div>
+    </div>
+
+    <!-- Sezione Recensioni -->
+    @if (reviews != null && reviews.Any())
+    {
+        <h4 class="mt-4">My Reviews</h4>
+        @foreach (var review in reviews)
+        {
+            <div class="d-flex border rounded p-3 mb-3 shadow-sm">
+                <!-- Immagine del Film -->
+                <div class="poster-container me-3">
+                    <img src="@review.PosterURL" 
+                         alt="@review.MovieTitle Poster" 
+                         class="rounded poster-image" 
+                         style="width: 100px; height: 150px; object-fit: cover;" />
+                </div>
+
+                <!-- Dettagli della Recensione -->
+                <div class="flex-grow-1">
+                    <h5>@review.MovieTitle</h5>
+                    <p><strong>Review ID:</strong> @review.ReviewId</p>
+                    <p><strong>Rating:</strong> @review.Rating/10</p>
+                    <p><strong>Comment:</strong> @review.ReviewText</p>
+                </div>
+
+                <!-- Pulsante Delete a Destra -->
+                <div class="align-self-center">
+                    <button class="btn btn-danger" @onclick="() => DeleteReview(review.ReviewId)">Delete</button>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="mt-4 text-muted">You haven't submitted any reviews yet.</p>
+    }
+}
+
+@code {
+    private Customer? user;
+    private List<Review> reviews = new();
+
+    [Inject]
+    private ILocalStorageService LocalStorage { get; set; } = null!;
+
+    [Inject]
+    private NavigationManager NavigationManager { get; set; } = null!;
+
+    [Inject]
+    private HttpClient Http { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Carica i dati dell'utente dal LocalStorage
+        var localUser = await LocalStorage.GetItemAsync<Customer>("user");
+
+        if (localUser == null)
+        {
+            // Redirect al login se l'utente non è loggato
+            NavigationManager.NavigateTo("/login");
+        }
+        else
+        {
+            try
+            {
+                // Recupera i dati aggiornati dal server
+                user = await Http.GetFromJsonAsync<Customer>($"api/customer/{localUser.CustomerId}");
+
+                // Aggiorna i dati nel LocalStorage
+                await LocalStorage.SetItemAsync("user", user);
+
+                // Carica le recensioni dell'utente
+                await LoadReviews();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading user data: {ex.Message}");
+                user = localUser; // Fallback ai dati locali
+            }
+        }
+    }
+
+
+    private async Task LoadReviews()
+    {
+        try
+        {
+            if (user?.CustomerId > 0) // Verifica che CustomerId sia valido
+            {
+                reviews = await Http.GetFromJsonAsync<List<Review>>($"api/moviereviews/customer/{user.CustomerId}")
+                          ?? new List<Review>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading reviews: {ex.Message}");
+        }
+    }
+
+    private async Task DeleteReview(int reviewId)
+    {
+        try
+        {
+            var response = await Http.DeleteAsync($"api/moviereviews/{reviewId}");
+            if (response.IsSuccessStatusCode)
+            {
+                // Rimuovi la recensione localmente dopo l'eliminazione
+                reviews.RemoveAll(r => r.ReviewId == reviewId);
+                Console.WriteLine($"Review {reviewId} deleted successfully.");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to delete review {reviewId}. Status: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error deleting review: {ex.Message}");
+        }
+    }
+}

@@ -1,0 +1,575 @@
+/* Movie Grid Styling */
+.movie-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px 0;
+    padding: 0 20px;
+}
+
+.movie-box {
+    display: flex; /* Usa flexbox per allineare gli elementi */
+    flex-direction: column; /* Disposizione verticale */
+    justify-content: space-between; /* Spinge il contenuto verso l'alto e il basso */
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    height: 100%; /* Altezza uguale per tutti */
+}
+
+.movie-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.movie-box img {
+    width: 250px;
+    height: 200px;
+    object-fit: cover; /* Mantiene il rapporto di aspetto dell'immagine */
+}
+
+/* Titoli e Descrizione */
+.movie-title {
+    font-size: 1.2rem;
+    margin: 10px 0;
+}
+
+.movie-description {
+    flex-grow: 1; /* Occupa lo spazio vuoto */
+    padding: 10px;
+}
+
+/* More Info Button */
+.movie-box button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    margin: 10px; /* Aggiunge spazio intorno al bottone */
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.movie-box button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+
+/* Hero Section */
+.hero-container {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    backdrop-filter: blur(6px) brightness(0.6);
+    padding: 2rem;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    width: 80%;
+    max-width: 1200px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    margin: auto;
+    position: relative;
+    top: 100%;
+}
+
+.hero-bg {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.poster-container {
+    max-height: 400px;
+    aspect-ratio: 2 / 3;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+    margin-right: 2rem;
+    flex-shrink: 0;
+}
+
+.poster-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.overview {
+    color: #fff;
+    flex-grow: 1;
+    margin-top: 1rem;
+}
+
+.overview h1 {
+    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.overview p {
+    margin: 0.5rem 0;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+/* Centrare il calendario */
+.date-selection {
+    display: flex;
+    justify-content: center; /* Centra orizzontalmente */
+    align-items: center; /* Centra verticalmente se necessario */
+    margin: 20px 0; /* Spazio sopra e sotto */
+}
+
+.date-input {
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    text-align: center; /* Centra il testo all'interno dell'input */
+    transition: border-color 0.3s ease;
+}
+
+.date-input:focus {
+    outline: none;
+    border-color: #007bff; /* Colore bordo in focus */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.login-register-buttons {
+    display: flex;
+    justify-content: center; /* Centra i pulsanti orizzontalmente */
+    gap: 15px; /* Aggiunge spazio tra i pulsanti */
+    margin-top: 20px; /* Spazio sopra i pulsanti */
+}
+
+.login-register-buttons button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px; /* Angoli arrotondati */
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-register-buttons .btn-primary {
+    background-color: #007bff; /* Blu principale */
+}
+
+.login-register-buttons .btn-primary:hover {
+    background-color: #0056b3; /* Blu scuro in hover */
+    transform: translateY(-2px); /* Effetto sollevamento */
+}
+
+.login-register-buttons .btn-success {
+    background-color: #28a745; /* Verde principale */
+}
+
+.login-register-buttons .btn-success:hover {
+    background-color: #1e7e34; /* Verde scuro in hover */
+    transform: translateY(-2px);
+}
+
+
+/* Time Selection */
+.centered-title {
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.8rem;
+    margin: 1.5rem 0;
+}
+
+.time-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.time-button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.time-button.selected {
+    background-color: #28a745;
+}
+
+/* Review Box - Section where users submit reviews */
+.review-box {
+    background-color: #f8f9fa; /* Light gray background */
+    border: 1px solid #ddd; /* Light border */
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.review-box h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.review-form label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #555;
+}
+
+.review-form input[type="number"],
+.review-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.075);
+    transition: border-color 0.3s ease;
+}
+
+.review-form input[type="number"]:focus,
+.review-form textarea:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.review-form button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.review-form button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* Reviews Section - Displays all submitted reviews */
+.reviews-section {
+    margin-top: 2rem;
+    padding: 1rem;
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.reviews-section h3 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #333;
+}
+
+/* Individual Review Card */
+.review-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e3e3e3;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.review-card:hover {
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.review-card p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.review-card strong {
+    color: #333;
+}
+
+.review-card .text-muted {
+    font-size: 0.9rem;
+    color: #999;
+}
+
+
+/* =======================
+   Seat Grid Styling
+   ======================= */
+
+/* Seat grid container */
+.seat-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px; /* Vertical spacing between rows */
+}
+
+/* Seat row container */
+.seat-row {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center seats horizontally */
+    gap: 5px; /* Horizontal spacing between seats */
+    margin-bottom: 5px; /* Space between rows */
+}
+
+/* Seat number labels on the left of each row */
+.row-label {
+    width: 35px;
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Column labels (seat numbers) at the top of the grid */
+.column-labels {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+
+.column-labels span {
+    display: inline-block;
+    width: 35px; /* Same width as seat buttons */
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+    line-height: 35px; /* Align vertically with seats */
+}
+
+/* Seat button styles */
+.seat {
+    width: 35px;
+    height: 35px;
+    background-color: #ddd; /* Default seat color */
+    border: 1px solid #aaa;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 35px; /* Center text vertically */
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #555;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect for available seats */
+.seat:hover {
+    background-color: #b5b5b5; /* Light gray for hover */
+    transform: scale(1.1);
+}
+.red-seat {
+    background-color: red !important;
+    color: white !important;
+    cursor: not-allowed !important;
+    border: 1px solid darkred !important;
+}
+
+
+.selected {
+    background-color: green;
+    color: white;
+    border: 1px solid darkgreen;
+}
+
+/* Selected seat style */
+.seat.selected {
+    background-color: #28a745; /* Green for selected seats */
+    border-color: #218838;
+    color: white;
+}
+
+/* Add spacing after every 10th and 20th seat */
+.seat-row .seat:nth-child(10),
+.seat-row .seat:nth-child(20) {
+    margin-right: 15px; /* Creates visible separation */
+}
+
+/* =======================
+   Selected Seats Info
+   ======================= */
+
+/* Display selected seat list */
+.selected-seats {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #333;
+}
+
+
+/* Confirm Button */
+.confirm-section {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.confirm-button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.confirm-button:hover {
+    background-color: #218838;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Empty Message */
+.empty-message {
+    text-align: center;
+    font-size: 1.5rem;
+    color: #666;
+    margin-top: 30px;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Spazio tra l'icona e il testo */
+    padding: 8px 0; /* Uniforma il padding verticale */
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+    color: #007bff; /* Cambia colore in hover */
+}
+
+.nav-item {
+    display: block;
+    margin: 0; /* Rimuove eventuali margini predefiniti */
+}
+
+.nav-item .oi,
+.nav-item .bi {
+    font-size: 1rem; /* Dimensione coerente per le icone */
+    vertical-align: middle;
+}
+
+.centered-title {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.no-bookings-message {
+    text-align: center;
+    color: gray;
+    font-size: 1.2rem;
+}
+
+.review-card, .booking-card {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: white;
+}
+
+.review-card img, .booking-card img {
+    width: 100px;
+    height: auto;
+    border-radius: 8px;
+}
+
+.review-card h4, .booking-card h4 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+
+.review-card:hover, .booking-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a stronger shadow on hover */
+}
+
+.centered-title {
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+.poster-container .poster-image {
+    width: 100px; /* Adjust width as needed */
+    height: 150px; /* Maintain consistent aspect ratio */
+    object-fit: cover; /* Ensures the image fits nicely */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional shadow for better appearance */
+}
+
+.my-bookings-title {
+    margin: 0 auto; /* Center horizontally */
+    padding: 10px 0; /* Add a bit of vertical padding */
+    text-align: center;
+    font-weight: bold;
+    color: #333; /* Dark grey for better readability */
+    border: none; /* Ensure no borders */
+    outline: none; /* Remove outlines */
+    box-shadow: none; /* Remove any box shadows */
+}
+
+.delete-button, .btn-danger {
+    background-color: #dc3545; /* Red background */
+    color: white; /* White text */
+    border: none;
+    padding: 8px 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.delete-button:hover, .btn-danger {
+    background-color: #c82333; /* Darker red on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.booking-card.expired {
+    background-color: #f8d7da; /* Colore rosso chiaro */
+    border: 1px solid #f5c6cb;
+    color: #721c24;
+}
+.booking-card.expired .badge {
+    background-color: #6c757d;
+}
+
+
+

@@ -1,0 +1,33 @@
+# Visual Studio / Rider / IntelliJ
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# C# / .NET
+**/bin/
+**/obj/
+
+# Java / Maven
+**/target/
+*.class
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment / secrets
+.env
+.env.*
+**/appsettings.Development.json
+**/application-local.properties
+
+# Optional: if you want to avoid tracking database dumps or docs
+*.pdf
+*.drawio
+*.astah

@@ -1,0 +1,257 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\obj\\Debug\\net8.0\\compressed\\xc3p38hd3r.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\obj\\Debug\\net8.0\\scopedcss\\bundle\\CineVibeClient.styles.css",
+      "PackagePath": "staticwebassets\\CineVibeClient.styles.css"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\icon-192.png",
+      "PackagePath": "staticwebassets\\icon-192.png"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Christmas_Vacation_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Christmas_Vacation_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Christmas_Vacation_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Christmas_Vacation_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Conclave_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Conclave_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Conclave_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Conclave_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Deadpool_Wolverine_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Deadpool_Wolverine_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Deadpool_Wolverine_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Deadpool_Wolverine_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\DearSanta_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\DearSanta_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\DearSanta_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\DearSanta_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Drink_Beer.jpg",
+      "PackagePath": "staticwebassets\\images\\Drink_Beer.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Drink_CocaCola.jpg",
+      "PackagePath": "staticwebassets\\images\\Drink_CocaCola.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Drink_Fanta.jpg",
+      "PackagePath": "staticwebassets\\images\\Drink_Fanta.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Drink_Sprite.jpg",
+      "PackagePath": "staticwebassets\\images\\Drink_Sprite.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Drink_Water.jpg",
+      "PackagePath": "staticwebassets\\images\\Drink_Water.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Eden_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Eden_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Eden_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Eden_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\GladiatorII_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\GladiatorII_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\GladiatorII_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\GladiatorII_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Gladiator_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Gladiator_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Gladiator_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Gladiator_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Home_Alone_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Home_Alone_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Home_Alone_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Home_Alone_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Juror2_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Juror2_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Juror2_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Juror2_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Moana2_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Moana2_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Moana2_Pictures.jpg",
+      "PackagePath": "staticwebassets\\images\\Moana2_Pictures.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Nosferatu_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Nosferatu_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Nosferatu_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Nosferatu_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Nutcrackers_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Nutcrackers_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Nutcrackers_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Nutcrackers_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\OneRed_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\OneRed_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\OneRed_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\OneRed_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Our_Little_Secret_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Our_Little_Secret_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Our_Little_Secret_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Our_Little_Secret_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Pushpa2_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Pushpa2_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Pushpa2_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Pushpa2_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Smile2_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Smile2_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Smile2_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Smile2_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snack_Bretzel.jpg",
+      "PackagePath": "staticwebassets\\images\\Snack_Bretzel.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snack_Candies.jpg",
+      "PackagePath": "staticwebassets\\images\\Snack_Candies.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snack_HotDog.jpg",
+      "PackagePath": "staticwebassets\\images\\Snack_HotDog.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snack_Nachos.jpg",
+      "PackagePath": "staticwebassets\\images\\Snack_Nachos.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snack_Popcorn.jpg",
+      "PackagePath": "staticwebassets\\images\\Snack_Popcorn.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snowwhite_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Snowwhite_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Snowwhite_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\Snowwhite_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\TLOTR_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\TLOTR_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\TLOTR_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\TLOTR_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\The_Substance_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\The_Substance_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\The_Substance_Poster.jpg",
+      "PackagePath": "staticwebassets\\images\\The_Substance_Poster.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Wicked_Details.jpg",
+      "PackagePath": "staticwebassets\\images\\Wicked_Details.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\images\\Wicked_Pictures.jpg",
+      "PackagePath": "staticwebassets\\images\\Wicked_Pictures.jpg"
+    },
+    {
+      "Id": "C:\\Users\\mathi\\RiderProjects\\CineVibeClient\\CineVibeClient\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.CineVibeClient.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.CineVibeClient.props",
+      "PackagePath": "build\\CineVibeClient.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.CineVibeClient.props",
+      "PackagePath": "buildMultiTargeting\\CineVibeClient.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.CineVibeClient.props",
+      "PackagePath": "buildTransitive\\CineVibeClient.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

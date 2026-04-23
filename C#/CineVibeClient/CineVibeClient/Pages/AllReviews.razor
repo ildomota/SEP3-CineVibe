@@ -1,0 +1,119 @@
+﻿@page "/all-reviews"
+@inject IHttpClientFactory ClientFactory
+
+<h3>All Reviews</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (groupedReviews.Any())
+{
+    @foreach (var group in groupedReviews)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Customer @group.CustomerId: @group.Username</h5>
+            </div>
+            <div class="card-body">
+                @foreach (var review in group.Reviews)
+                {
+                    <div class="mb-3">
+                        <p><strong>Movie:</strong> @review.MovieTitle</p>
+                        <p><strong>Rating:</strong> @review.Rating</p>
+                        <p><strong>Review:</strong> @review.ReviewText</p>
+                        <button class="btn btn-danger" @onclick="() => DeleteReview(review.ReviewId)">Delete</button>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>No reviews found.</p>
+}
+
+@code {
+    private List<ReviewGroup> groupedReviews = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadReviews();
+    }
+
+    private async Task LoadReviews()
+    {
+        isLoading = true;
+        try
+        {
+            var apiClient = ClientFactory.CreateClient("JavaAPI");
+            var response = await apiClient.GetFromJsonAsync<List<ReviewGroup>>("http://localhost:5220/api/moviereviews/all-reviews");
+            if (response != null)
+            {
+                groupedReviews = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading reviews: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteReview(int reviewId)
+    {
+        try
+        {
+            var apiClient = ClientFactory.CreateClient("JavaAPI");
+
+            // Replace {id} with the actual reviewId in the URL
+            var response = await apiClient.DeleteAsync($"http://localhost:5220/api/moviereviews/{reviewId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Review with ID {reviewId} successfully deleted.");
+            
+                // Reload the reviews to update the UI
+                await LoadReviews();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"Review with ID {reviewId} not found. Response: {response.StatusCode} - {response.ReasonPhrase}");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to delete review with ID {reviewId}. Response: {response.StatusCode} - {response.ReasonPhrase}");
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine($"HTTP error occurred while deleting review with ID {reviewId}: {httpEx.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error occurred while deleting review with ID {reviewId}: {ex.Message}");
+        }
+    }
+
+
+    private class ReviewGroup
+    {
+        public int CustomerId { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public List<Review> Reviews { get; set; } = new();
+    }
+
+    private class Review
+    {
+        public int ReviewId { get; set; }
+        public string MovieTitle { get; set; } = string.Empty;
+        public decimal Rating { get; set; }
+        public string ReviewText { get; set; } = string.Empty;
+    }
+}

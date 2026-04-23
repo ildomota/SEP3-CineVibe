@@ -1,0 +1,119 @@
+﻿@page "/all-snacks"
+@inject IHttpClientFactory ClientFactory
+
+<h3>All Snack Orders</h3>
+
+@if (isLoading)
+{
+    <p>Loading...</p>
+}
+else if (groupedSnackOrders.Any())
+{
+    @foreach (var group in groupedSnackOrders)
+    {
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Customer @group.CustomerId: @group.Username</h5>
+            </div>
+            <div class="card-body">
+                @foreach (var snackOrder in group.SnackOrders)
+                {
+                    <div class="mb-3">
+                        <p><strong>Snack:</strong> @snackOrder.SnackName</p>
+                        <p><strong>Quantity:</strong> @snackOrder.Quantity</p>
+                        <p><strong>Total Price:</strong> €@snackOrder.TotalPrice</p>
+                        <p><strong>Discounted Price:</strong> €@snackOrder.DiscountedPrice</p>
+                        <p><strong>Order Date:</strong> @snackOrder.OrderDate.ToString("g")</p>
+                        <button class="btn btn-danger" @onclick="() => DeleteSnackOrder(snackOrder.OrderId)">Delete</button>
+                    </div>
+                    <hr />
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p>No snack orders found.</p>
+}
+
+@code {
+    private List<SnackOrderGroup> groupedSnackOrders = new();
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadSnackOrders();
+    }
+
+    private async Task LoadSnackOrders()
+    {
+        isLoading = true;
+        try
+        {
+            var apiClient = ClientFactory.CreateClient("JavaAPI");
+            var response = await apiClient.GetFromJsonAsync<List<SnackOrderGroup>>("http://localhost:5220/api/snackorder/all-orders");
+            if (response != null)
+            {
+                groupedSnackOrders = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading snack orders: {ex.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeleteSnackOrder(int orderId)
+    {
+        try
+        {
+            var apiClient = ClientFactory.CreateClient("JavaAPI");
+
+            var response = await apiClient.DeleteAsync($"http://localhost:5220/api/snackorder/{orderId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Snack order with ID {orderId} successfully deleted.");
+                await LoadSnackOrders(); // Reload the snack orders to update the UI
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"Snack order with ID {orderId} not found. Response: {response.StatusCode} - {response.ReasonPhrase}");
+            }
+            else
+            {
+                Console.WriteLine($"Failed to delete snack order with ID {orderId}. Response: {response.StatusCode} - {response.ReasonPhrase}");
+            }
+        }
+        catch (HttpRequestException httpEx)
+        {
+            Console.WriteLine($"HTTP error occurred while deleting snack order with ID {orderId}: {httpEx.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Unexpected error occurred while deleting snack order with ID {orderId}: {ex.Message}");
+        }
+    }
+
+    private class SnackOrderGroup
+    {
+        public int CustomerId { get; set; }
+        public string Username { get; set; } = string.Empty;
+        public List<SnackOrderDetails> SnackOrders { get; set; } = new();
+    }
+
+    private class SnackOrderDetails
+    {
+        public int OrderId { get; set; }
+        public string SnackName { get; set; } = string.Empty;
+        public int Quantity { get; set; }
+        public decimal TotalPrice { get; set; }
+        public decimal DiscountedPrice { get; set; }
+        public DateTime OrderDate { get; set; }
+    }
+}

@@ -1,0 +1,146 @@
+﻿@using CineVibeClient.Models
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">CineVibeClient</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="movies">
+                <span class="oi oi-film"></span> Movies
+            </NavLink>
+        </div>
+
+        @if (userType == "Admin")
+        {
+            <!-- Admin Navigation -->
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="admin-account">
+                    <span class="bi bi-person-circle"></span> Admin Account
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="all-users">
+                    <span class="bi bi-people"></span> All Users
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="all-reviews">
+                    <span class="bi bi-chat-square-text"></span> All Reviews
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="all-snacks">
+                    <span class="bi bi-chat-square-text"></span> All Snacks
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" @onclick="Logout">
+                    <span class="bi bi-box-arrow-left"></span> Logout
+                </a>
+            </div>
+        }
+        else if (userType == "Customer")
+        {
+            <!-- Customer Navigation -->
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="myaccount">
+                    <span class="bi bi-person-circle"></span> My Account
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mybookings">
+                    <span class="oi oi-list-rich"></span> My Bookings
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="mysnacks">
+                    <span class="bi bi-cup-straw"></span> My Snacks
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="/mysnackorders">
+                    <span class="oi oi-list-rich" aria-hidden="true"></span> My Snack Orders
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <a class="nav-link" href="#" @onclick="Logout">
+                    <span class="bi bi-box-arrow-left"></span> Logout
+                </a>
+            </div>
+        }
+        else
+        {
+            <!-- Navigation for non-logged-in users -->
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-box-arrow-in-right"></span> Login
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="register">
+                    <span class="bi bi-pencil-square"></span> Register
+                </NavLink>
+            </div>
+        }
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+    private string userType = string.Empty;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CheckUserStatus();
+    }
+
+    private async Task CheckUserStatus()
+    {
+        var customer = await LocalStorage.GetItemAsync<Customer>("user");
+        var storedUserType = await LocalStorage.GetItemAsync<string>("userType");
+
+        if (customer != null && storedUserType == "Customer")
+        {
+            userType = "Customer";
+        }
+        else if (storedUserType == "Admin")
+        {
+            userType = "Admin";
+        }
+        else
+        {
+            // Clear stale data
+            await LocalStorage.RemoveItemAsync("user");
+            await LocalStorage.RemoveItemAsync("userType");
+            userType = string.Empty;
+        }
+
+        StateHasChanged(); // Refresh UI
+    }
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+
+    private async Task Logout()
+    {
+        // Clear all user-related data
+        await LocalStorage.RemoveItemAsync("user");
+        await LocalStorage.RemoveItemAsync("userType");
+
+        userType = string.Empty;
+        NavigationManager.NavigateTo("/", forceLoad: true);
+    }
+}

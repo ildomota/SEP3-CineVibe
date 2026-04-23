@@ -1,0 +1,79 @@
+﻿@page "/all-users"
+@using CineVibeClient.Models
+@inject IHttpClientFactory ClientFactory
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<h3>All Users</h3>
+
+@if (users == null)
+{
+    <div>Loading...</div>
+}
+else if (!users.Any())
+{
+    <div>No users found.</div>
+}
+else
+{
+    @foreach (var user in users)
+    {
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">@user.Username</h5>
+                <p class="card-text"><strong>Email:</strong> @user.Email</p>
+                <p class="card-text"><strong>Loyalty Points:</strong> @user.LoyaltyPoints</p>
+                <button class="btn btn-danger" @onclick="() => RemoveUser(user.CustomerId)">Remove Account</button>
+            </div>
+        </div>
+    }
+}
+
+@code {
+    private List<Customer> users = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        try
+        {
+            var apiClient = ClientFactory.CreateClient("JavaAPI");
+            var response = await apiClient.GetFromJsonAsync<List<Customer>>("http://localhost:5220/api/customer"); // Use the correct endpoint
+
+            if (response != null)
+            {
+                users = response;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading users: {ex.Message}");
+        }
+    }
+
+    private async Task RemoveUser(int customerId)
+    {
+        try
+        {
+            var apiClient = ClientFactory.CreateClient("JavaAPI");
+            var response = await apiClient.DeleteAsync($"http://localhost:5220/api/customer/{customerId}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Remove the user from the local list
+                users = users.Where(u => u.CustomerId != customerId).ToList();
+            }
+            else
+            {
+                Console.WriteLine($"Failed to delete user: {response.StatusCode}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error removing user: {ex.Message}");
+        }
+    }
+}

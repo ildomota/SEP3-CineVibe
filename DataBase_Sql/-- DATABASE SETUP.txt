@@ -1,0 +1,231 @@
+-- DATABASE SETUP
+
+-- The postgres password has to be changed in the appsettings.json to match your passowrd (CineVibeAPI) to "postgres"
+
+-- The postgres password has to be changed in the resources/application.properties to "postgres"
+
+create sequence customer_customerid_seq
+    as integer;
+
+alter sequence customer_customerid_seq owner to postgres;
+
+create sequence admin_adminid_seq
+    as integer;
+
+alter sequence admin_adminid_seq owner to postgres;
+
+create table customer
+(
+    customer_id   integer      default nextval('cinevibe.customer_customerid_seq'::regclass) not null
+        primary key,
+    username      varchar(255)                                                               not null
+        unique,
+    password_hash varchar(255)                                                               not null,
+    email         varchar(255)
+        unique,
+    status        varchar(255) default 'active'::character varying,
+    loyaltypoints integer      default 0,
+    created_at    timestamp(6) default CURRENT_TIMESTAMP,
+    updated_at    timestamp(6) default CURRENT_TIMESTAMP
+);
+
+alter table customer
+    owner to postgres;
+
+alter sequence customer_customerid_seq owned by customer.customer_id;
+
+create table admin
+(
+    admin_id      integer      default nextval('cinevibe.admin_adminid_seq'::regclass) not null
+        primary key,
+    username      varchar(255)                                                         not null
+        unique,
+    password_hash varchar(255)                                                         not null,
+    email         varchar(255)
+        unique,
+    status        varchar(255) default 'active'::character varying,
+    created_at    timestamp(6) default CURRENT_TIMESTAMP,
+    updated_at    timestamp(6) default CURRENT_TIMESTAMP
+);
+
+alter table admin
+    owner to postgres;
+
+alter sequence admin_adminid_seq owned by admin.admin_id;
+
+create table movies
+(
+    movieid            serial
+        primary key,
+    title              varchar(100) not null,
+    description        text,
+    releasedate        date,
+    rating             numeric(3, 2),
+    genre              varchar(50),
+    createdat          timestamp default CURRENT_TIMESTAMP,
+    updatedat          timestamp default CURRENT_TIMESTAMP,
+    posterurl          text,
+    backgroundimageurl text
+);
+
+alter table movies
+    owner to postgres;
+
+create table moviereviews
+(
+    reviewid    serial
+        primary key,
+    customer_id integer
+        constraint moviereviews_userid_fkey
+            references customer
+        constraint fk_customer_id
+            references customer
+            on delete cascade,
+    movieid     integer
+        references movies
+        constraint fk_movieid
+            references movies
+            on delete cascade,
+    rating      integer
+        constraint chk_rating_range
+            check ((rating >= 1) AND (rating <= 10)),
+    reviewtext  text,
+    createdat   timestamp default CURRENT_TIMESTAMP,
+    updatedat   timestamp default CURRENT_TIMESTAMP
+);
+
+alter table moviereviews
+    owner to postgres;
+
+create table snacks
+(
+    snackid   serial
+        primary key,
+    name      varchar(50)    not null,
+    price     numeric(10, 2) not null,
+    createdat timestamp default CURRENT_TIMESTAMP,
+    updatedat timestamp default CURRENT_TIMESTAMP,
+    imagepath varchar(255)
+);
+
+alter table snacks
+    owner to postgres;
+
+create table loyaltypoints
+(
+    loyaltyid   serial
+        primary key,
+    customer_id integer
+        constraint loyaltypoints_userid_fkey
+            references customer,
+    points      integer   default 0,
+    updatedat   timestamp default CURRENT_TIMESTAMP
+);
+
+alter table loyaltypoints
+    owner to postgres;
+
+create table bookings
+(
+    bookingid   serial
+        primary key,
+    customer_id integer
+        constraint bookings_userid_fkey
+            references customer,
+    movieid     integer
+        references movies,
+    bookingdate timestamp with time zone,
+    seatnumber  varchar(10),
+    status      varchar(10) default 'confirmed'::character varying,
+    createdat   timestamp   default CURRENT_TIMESTAMP,
+    updatedat   timestamp   default CURRENT_TIMESTAMP,
+    bookingtime varchar(5) not null
+);
+
+alter table bookings
+    owner to postgres;
+
+create table snackorders
+(
+    orderid         serial
+        primary key,
+    customer_id     integer
+        constraint snackorders_userid_fkey
+            references customer,
+    snackid         integer
+        references snacks,
+    quantity        integer                     not null,
+    totalprice      numeric(10, 2)              not null,
+    orderdate       timestamp      default CURRENT_TIMESTAMP,
+    booking_id      integer
+        constraint fk_booking
+            references bookings,
+    discountedprice numeric(10, 2) default 0.00 not null
+);
+
+alter table snackorders
+    owner to postgres;
+
+create table notifications
+(
+    notificationid serial
+        primary key,
+    customer_id    integer,
+    createdat      timestamp default CURRENT_TIMESTAMP,
+    message        text,
+    isread         boolean   default false
+);
+
+alter table notifications
+    owner to postgres;
+
+create table "__EFMigrationsHistory"
+(
+    "MigrationId"    varchar(150) not null
+        constraint "PK___EFMigrationsHistory"
+            primary key,
+    "ProductVersion" varchar(32)  not null
+);
+
+alter table "__EFMigrationsHistory"
+    owner to postgres;
+
+
+
+
+
+INSERT INTO movies (movieid, title, description, releasedate, rating, genre, createdat, updatedat, posterurl, backgroundimageurl)
+VALUES
+(14, 'Deadpool & Wolverine', 'Deadpool teams up with Wolverine for an outrageous mission.', '2024-07-26', 7.60, 'Action', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Deadpool_Wolverine_Poster.jpg', '/images/Deadpool_Wolverine_Details.jpg'),
+(11, 'Conclave', 'A dramatic look inside a papal election.', '2024-10-25', 7.40, 'Drama', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Conclave_Poster.jpg', '/images/Conclave_Details.jpg'),
+(16, 'Christmas Vacation', 'The Griswolds prepare for a perfect family Christmas.', '1989-12-01', 7.50, 'Comedy', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Christmas_Vacation_Poster.jpg', '/images/Christmas_Vacation_Details.jpg'),
+(18, 'The Lord of the Rings: The War of the Rohirrim', 'A prequel to The Lord of the Rings exploring Helm Hammerhand.', '2024-12-12', 6.80, 'Fantasy', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/TLOTR_Poster.jpg', '/images/TLOTR_Details.jpg'),
+(6, 'Our Little Secret', 'A dark comedy exploring family dynamics.', '2024-11-27', 5.80, 'Drama', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Our_Little_Secret_Poster.jpg', '/images/Our_Little_Secret_Details.jpg'),
+(12, 'Juror Number 2', 'A courtroom thriller where a juror uncovers dark truths.', '2024-10-27', 7.10, 'Thriller', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Juror2_Poster.jpg', '/images/Juror2_Details.jpg'),
+(10, 'Gladiator', 'A betrayed Roman general seeks revenge.', '2000-09-01', 8.50, 'Action', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Gladiator_Poster.jpg', '/images/Gladiator_Details.jpg'),
+(9, 'Nutcrackers', 'A whimsical holiday tale with a twist.', '2024-11-29', 5.50, 'Family', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Nutcrackers_Poster.jpg', '/images/Nutcrackers_Details.jpg'),
+(1, 'Wicked', 'A reimagining of the Land of Oz focusing on the witches.', '2024-11-22', 8.10, 'Fantasy', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Wicked_Pictures.jpg', '/images/Wicked_Details.jpg'),
+(2, 'Moana 2', 'Moana returns to the ocean for a new adventure.', '2024-11-27', 7.00, 'Animation', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Moana2_Pictures.jpg', '/images/Moana2_Details.jpg'),
+(3, 'Gladiator II', 'The story of Lucius, the son of Lucilla, 25 years later.', '2024-11-22', 6.90, 'Action', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Gladiator_Poster.jpg', '/images/Gladiator_Details.jpg'),
+(4, 'Nosferatu', 'A new take on the classic vampire tale.', '2024-12-25', 7.50, 'Horror', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Nosferatu_Poster.jpg', '/images/Nosferatu_Details.jpg'),
+(5, 'The Substance', 'A psychological thriller involving an experimental drug.', '2024-09-20', 7.40, 'Thriller', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/The_Substance_Poster.jpg', '/images/The_Substance_Details.jpg'),
+(13, 'Snow White', 'A live-action adaptation of the Disney classic.', '2024-03-21', 7.00, 'Fantasy', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Snowwhite_Poster.jpg', '/images/Snowwhite_Details.jpg'),
+(17, 'Smile 2', 'The chilling sequel to the original horror hit.', '2024-10-18', 6.80, 'Horror', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Smile2_Poster.jpg', '/images/Smile2_Details.jpg'),
+(7, 'Pushpa 2', 'The continuation of Pushpa’s journey in the crime world.', '2024-12-05', 6.70, 'Action', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Pushpa2_Poster.jpg', '/images/Pushpa2_Details.jpg'),
+(15, 'One Red', 'A gripping war drama exploring sacrifice.', '2024-11-15', 6.80, 'Drama', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/OneRed_Poster.jpg', '/images/OneRed_Details.jpg'),
+(19, 'Eden', 'A dystopian thriller about humanity’s last hope.', '2024-09-07', 6.00, 'Sci-Fi', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Eden_Poster.jpg', '/images/Eden_Details.jpg'),
+(20, 'Home Alone', 'A young boy defends his home from burglars.', '1990-12-21', 7.50, 'Comedy', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/Home_Alone_Poster.jpg', '/images/Home_Alone_Details.jpg'),
+(8, 'Dear Santa', 'A heartfelt comedy about saving Christmas.', '2024-11-25', 5.40, 'Comedy', '2024-12-13 01:49:09.453443', '2024-12-13 01:49:09.453443', '/images/DearSanta_Poster.jpg', '/images/DearSanta_Details.jpg');
+
+INSERT INTO snacks (snackid, name, price, createdat, updatedat, imagepath)
+VALUES
+(7, 'Coca Cola', 3.50, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Drink_CocaCola.jpg'),
+(5, 'Bretzel', 6.00, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Snack_Bretzel.jpg'),
+(4, 'Bag of Candies', 6.00, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Snack_Candies.jpg'),
+(3, 'Nachos', 4.50, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Snack_Nachos.jpg'),
+(2, 'Hot Dog', 5.00, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Snack_HotDog.jpg'),
+(9, 'Sprite', 3.50, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Drink_Sprite.jpg'),
+(10, 'Beer', 6.00, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Drink_Beer.jpg'),
+(6, 'Water', 2.00, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Drink_Water.jpg'),
+(8, 'Fanta', 3.50, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Drink_Fanta.jpg'),
+(1, 'Popcorn', 4.00, '2024-12-18 01:55:29.973376', '2024-12-18 01:55:29.973376', 'images/Snack_Popcorn.jpg');

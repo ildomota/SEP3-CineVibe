@@ -1,0 +1,376 @@
+﻿@page "/moviedetails/{movieid:int}"
+@using CineVibeClient.Models
+@inject HttpClient Http
+@inject NavigationManager _nav
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+@if (movie == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="hero-bg" style="background-image: url('@(movie?.BackgroundImageUrl != null ? $"{_nav.BaseUri}{movie.BackgroundImageUrl.TrimStart('/')}" : "default-background.jpg")');">
+        <div class="hero-container">
+            <div class="poster-container">
+                <img src="@($"{_nav.BaseUri}{(movie?.PosterURL ?? "default-poster.jpg").TrimStart('/')}" )" alt="@movie?.Title" />
+            </div>
+            <div class="overview">
+                <h1>@(movie?.Title ?? "Unknown Title")</h1>
+                <p><strong>Genre:</strong> @(movie?.Genre ?? "Unknown Genre")</p>
+                <p>
+                    <strong>Rating:</strong>
+                    @if (averageRating > 0)
+                    {
+                    @($"{averageRating.ToString("0.0")}/10")
+                    }
+                    else
+                    {
+                    <span style="font-style: italic;">This movie doesn't have any Ratings yet!</span>
+                    }
+                </p>
+                <p><strong>Release Date:</strong> @(movie?.ReleaseDate.ToShortDateString() ?? "Unknown Date")</p>
+                <p><strong>Description:</strong> @(movie?.Description ?? "No description available.")</p>
+            </div>
+
+        </div>
+    </div>
+
+    @if (isLoggedIn)
+    {
+        <!-- Step 1: Select Date -->
+        <p class="centered-title">Select a Date:</p>
+        <div class="date-selection">
+            <input type="date" @bind="SelectedDate" class="date-input" min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+        </div>
+
+        @if (SelectedDate != null)
+        {
+            <!-- Step 2: Select Time -->
+            <p class="centered-title">Select a Time:</p>
+            <div class="time-buttons">
+                @foreach (var time in movieTimes)
+                {
+                    var selectedDateTime = DateTime.Parse($"{SelectedDate.Value:yyyy-MM-dd} {time}");
+                    if (selectedDateTime >= DateTime.Now)
+                    {
+                        <button class="time-button @(SelectedTime == time ? "selected" : "")"
+                                @onclick="() => SelectTime(time)">
+                            @time
+                        </button>
+                    }
+                }
+            </div>
+
+            <!-- Step 3: Select Seats -->
+            @if (SelectedTime != null)
+            {
+                <p class="centered-title">Select your seat/s!</p>
+                <div class="seat-grid">
+                    <!-- Column Labels -->
+                    <div class="column-labels">
+                        <span class="row-placeholder"></span>
+                        @for (int i = 1; i <= 30; i++)
+                        {
+                            <span>@i</span>
+                        }
+                    </div>
+
+                    @foreach (var row in seatRows)
+                    {
+                        <div class="seat-row">
+                            <span class="row-label">@row</span>
+                            @for (int i = 1; i <= 30; i++)
+                            {
+                            string seatId = $"{row}{i}";
+                            bool isUnavailable = unavailableSeats.Contains(seatId); // Verifica se il posto è non disponibile
+
+                            <button class="seat @(isUnavailable ? "unavailable-seat red-seat" : (selectedSeats.Contains(seatId) ? "selected" : ""))"
+                                    @onclick="() => SelectSeat(seatId)"
+                                    disabled="@isUnavailable">
+                                @seatId
+                            </button>
+                            }
+
+                        </div>
+
+                    }
+                </div>
+
+                <!-- Display Selected Seats -->
+                <p class="selected-seats">
+                    The seats you selected are: @string.Join(", ", selectedSeats)
+                </p>
+
+                <!-- Error Message -->
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <p class="text-danger">@errorMessage</p>
+                }
+
+                <!-- Confirm Button -->
+                @if (selectedSeats.Any())
+                {
+                    <div class="confirm-section">
+                        <button class="confirm-button" @onclick="ConfirmBooking">Confirm</button>
+                    </div>
+                }
+            }
+        }
+    }
+    else
+    {
+        <!-- Login/Register Prompt -->
+        <div class="login-prompt">
+            <p class="centered-title">Want to see this movie? Log in or Register to book your seat/s!</p>
+            <div class="login-register-buttons">
+                <button @onclick="@(() => _nav.NavigateTo("/login"))" class="btn-primary">Login</button>
+                <button @onclick="@(() => _nav.NavigateTo("/register"))" class="btn-success">Register</button>
+            </div>
+        </div>
+    }
+}
+
+@if (!string.IsNullOrEmpty(bookingMessage))
+{
+    <div class="alert @(isBookingSuccess ? "alert-success" : "alert-danger")">
+        @bookingMessage
+    </div>
+}
+<!-- Feedback Section -->
+@if (isLoggedIn)
+{
+<div class="review-box mt-5">
+    <h3>Have you already seen it? Tell us what you think about it!</h3>
+    <div class="review-form">
+        <label for="rating">Rating (1-10):</label>
+        <input type="number" id="rating" min="1" max="10" @bind="userRating" class="form-control mb-2" />
+
+        <label for="reviewText">Your Review:</label>
+        <textarea id="reviewText" @bind="userReview" rows="3" class="form-control mb-3"></textarea>
+
+        <button class="btn btn-primary" @onclick="SubmitReview">Submit Review</button>
+    </div>
+</div>
+}
+
+<!-- Reviews Section -->
+<div class="reviews-section mt-5">
+    <h3>What others think about this movie:</h3>
+    @if (reviews == null || !reviews.Any())
+    {
+    <p>No reviews yet. Be the first to share your thoughts!</p>
+    }
+    else
+    {
+        @foreach (var review in reviews)
+        {
+            <div class="review-card border rounded p-3 mb-2">
+                <p><strong>Rating:</strong> @review.Rating/10</p>
+                <p>@review.ReviewText</p>
+                <p class="text-muted">Reviewed on: @review.CreatedAt.ToString("dd/MM/yyyy")</p>
+            </div>
+        }
+    }
+
+</div>
+
+@code {
+    [Parameter] public int movieid { get; set; }
+
+    private Movie? movie;
+    private bool isLoggedIn = false;
+    private DateTime? SelectedDate;
+    private string? SelectedTime;
+    private HashSet<string> unavailableSeats = new();
+    private HashSet<string> selectedSeats = new();
+    private string[] seatRows = { "A", "B", "C", "D", "E", "F", "G" };
+    private string[] movieTimes = { "10:00", "12:00", "14:00", "16:00", "18:00", "20:00", "22:00" };
+    private int userRating = 1;
+    private string userReview = string.Empty;
+    private int loggedInCustomerId;
+    private string? bookingMessage;
+    private string? errorMessage;
+    private bool isBookingSuccess;
+    private List<MovieReview> reviews = new();
+    private double averageRating = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        movie = await Http.GetFromJsonAsync<Movie>($"api/movie/{movieid}");
+
+        var user = await LocalStorage.GetItemAsync<Customer>("user");
+        if (user != null)
+        {
+            loggedInCustomerId = user.CustomerId;
+            isLoggedIn = true;
+        }
+        else
+        {
+            isLoggedIn = false;
+        }
+
+        await FetchReviews(); // Recupera le recensioni e calcola la media
+    }
+
+    private async Task FetchReviews()
+    {
+        try
+        {
+            reviews = await Http.GetFromJsonAsync<List<MovieReview>>($"api/moviereviews/{movieid}") ?? new List<MovieReview>();
+
+            if (reviews.Any())
+            {
+                averageRating = reviews.Average(r => r.Rating);
+            }
+            else
+            {
+                averageRating = 0; // Nessuna recensione presente
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error fetching reviews: {ex.Message}");
+            averageRating = 0; // Fallback in caso di errore
+        }
+    }
+
+    
+
+    async Task FetchUnavailableSeats()
+    {
+        if (SelectedDate != null && SelectedTime != null)
+        {
+            try
+            {
+                var dateUTC = SelectedDate.Value.ToUniversalTime().ToString("yyyy-MM-dd");
+
+                // Chiamata API per recuperare i posti non disponibili
+                var response = await Http.GetFromJsonAsync<List<string>>(
+                    $"api/booking/seats/{movieid}/{dateUTC}/{SelectedTime}");
+
+                if (response != null)
+                {
+                    unavailableSeats = response.ToHashSet();
+                    Console.WriteLine($"Unavailable Seats (Client): {string.Join(", ", unavailableSeats)}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching unavailable seats: {ex.Message}");
+                errorMessage = "Unable to fetch unavailable seats.";
+            }
+        }
+    }
+
+
+
+
+
+
+    void SelectTime(string time)
+    {
+        SelectedTime = time;
+        selectedSeats.Clear();
+        unavailableSeats.Clear();
+        _ = FetchUnavailableSeats(); // Fetch seats without blocking
+    }
+
+    void SelectSeat(string seatId)
+    {
+        if (unavailableSeats.Contains(seatId))
+        {
+            errorMessage = "This seat is already taken!";
+            return;
+        }
+
+        errorMessage = null;
+        if (selectedSeats.Contains(seatId))
+            selectedSeats.Remove(seatId);
+        else
+            selectedSeats.Add(seatId);
+    }
+
+    private async Task ConfirmBooking()
+    {
+        if (SelectedDate == null || SelectedTime == null || !selectedSeats.Any())
+        {
+            bookingMessage = "Please select date, time, and at least one seat.";
+            isBookingSuccess = false;
+            return;
+        }
+
+        var bookingRequest = selectedSeats.Select(seat => new
+        {
+            CustomerId = loggedInCustomerId,
+            MovieId = movieid,
+            BookingDate = DateTime.SpecifyKind(SelectedDate.Value.Date, DateTimeKind.Utc), // Assicurati che sia UTC
+            BookingTime = SelectedTime,
+            SeatNumber = seat,
+            Status = "Confirmed"
+        }).ToList();
+
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/booking", bookingRequest);
+            if (response.IsSuccessStatusCode)
+            {
+                bookingMessage = "Booking confirmed successfully!";
+                isBookingSuccess = true;
+                selectedSeats.Clear();
+                unavailableSeats.Clear();
+                SelectedTime = null;
+                SelectedDate = null;
+            }
+            else
+            {
+                bookingMessage = $"Booking failed.";
+                isBookingSuccess = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            bookingMessage = $"Error during booking: {ex.Message}";
+            isBookingSuccess = false;
+        }
+    }
+
+    private async Task SubmitReview()
+    {
+        if (userRating < 1 || userRating > 10 || string.IsNullOrWhiteSpace(userReview)) return;
+
+        var reviewPayload = new
+        {
+            CustomerId = loggedInCustomerId, // Usa l'ID utente recuperato dinamicamente
+            MovieId = movieid,
+            Rating = userRating,
+            ReviewText = userReview,
+            CreatedAt = DateTime.UtcNow
+        };
+
+
+        try
+        {
+            var response = await Http.PostAsJsonAsync("api/moviereviews", reviewPayload);
+            if (response.IsSuccessStatusCode)
+            {
+                await FetchReviews();
+                userRating = 1;
+                userReview = string.Empty;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error submitting review: {ex.Message}");
+        }
+    }
+
+    private class MovieReview
+    {
+        public int Rating { get; set; }
+        public string ReviewText { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+    }
+
+}
