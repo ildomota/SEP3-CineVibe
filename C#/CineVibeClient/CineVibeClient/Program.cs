@@ -13,7 +13,7 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5220/") }); 
 
 // HttpClient for Java API
-builder.Services.AddHttpClient("JavaAPI", client => client.BaseAddress = new Uri("http://localhost:8080/"));
+builder.Services.AddHttpClient("JavaAPI", client => client.BaseAddress = new Uri("http://localhost:5220/"));
 
 
 

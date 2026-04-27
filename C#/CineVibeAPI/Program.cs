@@ -13,6 +13,17 @@ builder.Services.AddSwaggerGen();
 // Configura CORS
 builder.Services.AddCors(options =>
 {
+    options.AddPolicy("AllowClient",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5169")
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
+builder.Services.AddCors(options =>
+{
     options.AddPolicy("AllowBlazorApp", policy =>
     {
         policy.WithOrigins("http://localhost:5169") // URL della tua Blazor App
@@ -36,6 +47,7 @@ app.UseAuthorization();
 // Usa il middleware CORS
 app.UseCors("AllowBlazorApp");
 
+app.UseCors("AllowClient");
 app.MapControllers();
 
 

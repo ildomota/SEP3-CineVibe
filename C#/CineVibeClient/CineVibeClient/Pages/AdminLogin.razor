@@ -32,39 +32,40 @@
     private string? adminLoginError;
 
     private async Task HandleAdminLogin()
+{
+    var apiClient = ClientFactory.CreateClient("JavaAPI");
+    var loginData = new
     {
-        var apiClient = ClientFactory.CreateClient("JavaAPI");
-        var loginData = new
-        {
-            SecretCode = adminLoginModel.AdminCode,
-            Username = adminLoginModel.Username,
-            Password = adminLoginModel.Password
-        };
+        username = adminLoginModel.Username,
+        passwordHash = adminLoginModel.Password,
+        secretCode = adminLoginModel.AdminCode
+    };
 
-        try
-        {
-            var response = await apiClient.PostAsJsonAsync("api/admins/login", loginData);
+    try
+    {
+        var response = await apiClient.PostAsJsonAsync("api/Admin/login", loginData);
 
-            if (response.IsSuccessStatusCode)
+        if (response.IsSuccessStatusCode)
+        {
+            var admin = await response.Content.ReadFromJsonAsync<Admin>();
+            if (admin != null)
             {
-                var admin = await response.Content.ReadFromJsonAsync<Admin>();
-                if (admin != null)
-                {
-                    await LocalStorage.SetItemAsync("user", admin);
-                    await LocalStorage.SetItemAsync("userType", "Admin");
-                    NavigationManager.NavigateTo("/admin-account", forceLoad: true);
-                }
-            }
-            else
-            {
-                adminLoginError = "Invalid admin credentials.";
+                await LocalStorage.SetItemAsync("user", admin);
+                await LocalStorage.SetItemAsync("userType", "Admin");
+                NavigationManager.NavigateTo("/admin-account", forceLoad: true);
             }
         }
-        catch (Exception ex)
+        else
         {
-            adminLoginError = $"An error occurred: {ex.Message}";
+            adminLoginError = "Invalid admin credentials.";
         }
     }
+    catch (Exception ex)
+    {
+        adminLoginError = $"An error occurred: {ex.Message}";
+    }
+}
+
 
     private class AdminLoginModel
     {
